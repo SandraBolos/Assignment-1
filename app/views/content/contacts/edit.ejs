@@ -1,0 +1,49 @@
+
+    <div class="container">
+        <h1><%= title %></h1>
+    <div class="row">
+        <div class="offset-md-3 col-md-6">
+                        <form class="form" method="POST">
+                <input type="hidden" name="id" value="<%= businessContact._id %>" >
+                <div class="form-group">
+                    <label for="nameTextField">Full Name</label>
+                    <input type="text" class="form-control"
+                    id="nameTextField"
+                    placeholder="Enter your name"
+                    name="name" 
+                    value="<%=businessContact.name %>"
+                    required>
+                </div>
+
+                <div class="form-group">
+                    <label for="authorTextField">Contact Number</label>
+                    <input type="text" class="form-control"
+                    id="authorTextField"
+                    placeholder="Enter your contact number"
+                    name="contact" 
+                    value="<%= businessContact.contact %>"
+                    required>
+                </div>
+
+                <div class="form-group">
+                    <label for="publishedTextField">Email</label>
+                    <input type="text" class="form-control"
+                    id="publishedTextField"
+                    placeholder="Enter your email address"
+                    name="email" 
+                    value="<%= businessContact.email %>"
+                    required>
+                </div>
+   
+
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-edit"></i> Submit</button>
+                
+                    <a href="/contacts-list" class="btn btn-warning">
+                        <i class="fas fa-undo"></i> Cancel</a>
+
+            </form>
+        </div>
+
+    </div>
+</div>

@@ -8,18 +8,33 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import session  from 'express-session';
-
+import mongoose from 'mongoose';
 
 import path, {dirname} from 'path';
 import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const port=3000;
-import { Secret } from '../config/index.js';
+import { Secret, MongoURI } from '../config/index.js';
 
+import passport from 'passport';
+import passportLocal from 'passport-local';
+import flash from 'connect-flash';
+
+let localStrategy = passportLocal.Strategy;
+
+import User from './models/user.js';
 
 import indexRouter from '../app/routes/index.js';
+import contactRouter from '../app/routes/contacts.js';
+import authRouter from '../app/routes/auth.js';
+
 const app = express();
 
+mongoose.connect(MongoURI);
+const db = mongoose.connection;
+
+db.on('open', () => console.log(`Connected to MongoDB`));
+db.on('error', () => console.log("Mongo Connection Error"));
 
 app.set('views', path.join(__dirname, '/views'));
 app.set('view engine', 'ejs');
@@ -40,15 +55,29 @@ app.use(session({
     saveUninitialized: false,
     resave: false
 }));
-app.use('/',indexRouter);
 
-app.use(function(req, res, next) {
-    res.locals.success_msg = req.flash('success_msg');
-    res.locals.error_msg = req.flash('error_msg');
-    res.locals.error = req.flash('error');
-    next();
-  });
-export default app;
+
+app.use(session({
+    secret: Secret,
+    saveUninitialized: false,
+    resave: false
+}));
+
+app.use(flash());
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+passport.use(User.createStrategy());
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use('/',indexRouter);
+app.use('/',contactRouter);
+app.use('/', authRouter);
 
 app.listen(3000, () =>{console.log("running on 3000");
 })
+export default app;
